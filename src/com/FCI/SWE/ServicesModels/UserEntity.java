@@ -1,5 +1,6 @@
-package com.FCI.SWE.Models;
+package com.FCI.SWE.ServicesModels;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
@@ -29,6 +31,8 @@ public class UserEntity {
 	private String name;
 	private String email;
 	private String password;
+	private long id;
+//	private long sendId;
 
 	/**
 	 * Constructor accepts user data
@@ -44,7 +48,19 @@ public class UserEntity {
 		this.name = name;
 		this.email = email;
 		this.password = password;
-
+		
+	}
+	
+	public UserEntity(String name){
+		this.name=name;
+	}
+	
+	private void setId(long id){
+		this.id = id;
+	}
+	
+	public long getId(){
+		return id;
 	}
 
 	public String getName() {
@@ -59,30 +75,7 @@ public class UserEntity {
 		return password;
 	}
 
-	/**
-	 * 
-	 * This static method will form UserEntity class using json format contains
-	 * user data
-	 * 
-	 * @param json
-	 *            String in json format contains user data
-	 * @return Constructed user entity
-	 */
-	public static UserEntity getUser(String json) {
-
-		JSONParser parser = new JSONParser();
-		try {
-			JSONObject object = (JSONObject) parser.parse(json);
-			return new UserEntity(object.get("name").toString(), object.get(
-					"email").toString(), object.get("password").toString());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
+	
 	/**
 	 * 
 	 * This static method will form UserEntity class using user name and
@@ -102,18 +95,46 @@ public class UserEntity {
 		Query gaeQuery = new Query("users");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		for (Entity entity : pq.asIterable()) {
-			System.out.println(entity.getProperty("name").toString());
 			if (entity.getProperty("name").toString().equals(name)
 					&& entity.getProperty("password").toString().equals(pass)) {
 				UserEntity returnedUser = new UserEntity(entity.getProperty(
 						"name").toString(), entity.getProperty("email")
 						.toString(), entity.getProperty("password").toString());
+				returnedUser.setId(entity.getKey().getId());
 				return returnedUser;
 			}
 		}
 
 		return null;
 	}
+	
+	//select matches names 
+	
+	public static ArrayList<UserEntity> getUser(String name) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+        ArrayList<UserEntity> matches=new ArrayList<UserEntity>(); 
+		Query gaeQuery = new Query("users");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("name").toString().equals(name)) {
+				UserEntity returnedUser = new UserEntity(entity.getProperty(
+						"name").toString());
+				returnedUser.setId(entity.getKey().getId());
+			
+				matches.add(returnedUser);
+			}
+		}
+		if(matches.size()>0)
+              return matches;
+		else
+		return null;
+	}
+	
+	
+	
+	
+	
 
 	/**
 	 * This method will be used to save user object in datastore
@@ -137,4 +158,28 @@ public class UserEntity {
 		return true;
 
 	}
+
+/*
+//creat table Request Friend
+public Boolean makeFriendRequest(int senderId,int recId) {
+       /*DatastoreService datastore = DatastoreServiceFactory
+         .getDatastoreService();
+            Query gaeQuery = new Query("FriendRequest");
+         PreparedQuery pq = datastore.prepare(gaeQuery);
+         List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
+         ArrayList<UserEntity> friendRequests = new ArrayList<UserEntity>();
+         for (Entity entity : pq.asIterable()) {
+        	 UserEntity user = new UserEntity(entity.getProperty("name").toString());
+        	 friendRequests.add(user);
+       Entity employee = new Entity("FriendRequest", list.size() + 1);
+
+       employee.setProperty("name", this.name);
+       employee.setProperty("password", this.password);
+       //employee.setProperty("sendID", this.sendID);
+       datastore.put(employee);
+ 
+      return true;
+
+}
+*/
 }

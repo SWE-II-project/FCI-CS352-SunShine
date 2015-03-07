@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.FCI.SWE.Models.UserEntity;
+import com.FCI.SWE.ServicesModels.UserEntity;
 
 /**
  * This class contains REST services, also contains action function for web
@@ -37,8 +37,8 @@ import com.FCI.SWE.Models.UserEntity;
  *
  */
 @Path("/")
-@Produces("text/html")
-public class Service {
+@Produces(MediaType.TEXT_PLAIN)
+public class UserServices {
 	
 	
 	/*@GET
@@ -78,6 +78,33 @@ public class Service {
 	 * @param pass provided user password
 	 * @return user in json format
 	 */
+	
+	@POST
+	@Path("/SignoutService")
+	public String loginService(@FormParam("uname") String uname,
+			@FormParam("password") String pass) {
+		JSONObject object = new JSONObject();
+		UserEntity user = UserEntity.getUser(uname, pass);
+		if (user == null) {
+			object.put("Status", "Failed");
+
+		} else {
+			object.put("Status", "OK");
+			object.put("name", user.getName());
+			object.put("email", user.getEmail());
+			object.put("password", user.getPass());
+			object.put("id", user.getId());
+		}
+		return object.toString();
+
+	}
+	
+	
+	
+	
+	
+	
+	
 	@POST
 	@Path("/LoginService")
 	public String loginService(@FormParam("uname") String uname,
@@ -92,8 +119,8 @@ public class Service {
 			object.put("name", user.getName());
 			object.put("email", user.getEmail());
 			object.put("password", user.getPass());
+			object.put("id", user.getId());
 		}
-
 		return object.toString();
 
 	}
