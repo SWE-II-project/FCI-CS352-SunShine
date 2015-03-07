@@ -47,6 +47,19 @@ public class UserController {
 	 * @return sign up page
 	 */
 	@GET
+	@Path("/signout")
+	public Response signOut() {
+		User.setCurrentActiveUser(null);
+		return Response.ok(new Viewable("/jsp/entryPoint")).build();
+	}
+	
+	
+	
+	
+	
+	
+	
+	@GET
 	@Path("/signup")
 	public Response signUp() {
 		return Response.ok(new Viewable("/jsp/register")).build();
@@ -103,6 +116,7 @@ public class UserController {
 		JSONParser parser = new JSONParser();
 		Object obj;
 		try {
+			
 			// System.out.println(retJson);
 			obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;

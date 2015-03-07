@@ -1,5 +1,7 @@
 package com.FCI.SWE.Models;
 
+import java.util.ArrayList;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -30,6 +32,10 @@ public class User {
 
 	}
 	
+	public User(String string) {
+		// TODO Auto-generated constructor stub
+	}
+
 	private void setId(long id){
 		this.id = id;
 	}
@@ -53,7 +59,9 @@ public class User {
 	public static User getCurrentActiveUser(){
 		return currentActiveUser;
 	}
-	
+	public static void setCurrentActiveUser(User user){
+		 currentActiveUser=user.getCurrentActiveUser();
+	}
 	/**
 	 * 
 	 * This static method will form UserEntity class using json format contains
@@ -72,6 +80,28 @@ public class User {
 					"email").toString(), object.get("password").toString());
 			currentActiveUser.setId(Long.parseLong(object.get("id").toString()));
 			return currentActiveUser;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+	public static ArrayList<User> getUsers(String json) {
+
+		JSONParser parser = new JSONParser();
+		try {
+			JSONObject object = (JSONObject) parser.parse(json);
+			ArrayList<User> users = new ArrayList<User>();
+			
+			for(int i=0;i<object.size();i++)
+			{
+				User user = new User(object.get("name"+i).toString());
+				//user.setId(Long.parseLong(object.get("id").toString()));
+				users.add(user);
+			}
+			
+			return users;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

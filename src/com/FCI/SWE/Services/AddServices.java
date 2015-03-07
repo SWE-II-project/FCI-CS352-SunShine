@@ -11,6 +11,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
 
+import com.FCI.SWE.Models.User;
+import com.FCI.SWE.ServicesModels.RequestEntity;
 import com.FCI.SWE.ServicesModels.UserEntity;
 
 @Path("/")
@@ -40,5 +42,32 @@ public class AddServices {
 	
 	
 	}
+	
+	
+	@POST
+	@Path("/addService")
+	public String add(@FormParam("id") long id) {
+		
+		RequestEntity requestEntity = new RequestEntity
+				(User.getCurrentActiveUser().getName(),User.getCurrentActiveUser().getId(),id,"pending");
+        JSONObject json = new JSONObject();
+        
+		if (!requestEntity.saveRequest()) {
+			json.put("Status", "Failed");
+		}
+		else {
+		
+			json.put("Status", "OK");
+			
+		}
+		
+			return json.toString();
+	
+	
+	}
+	
+	
+	
+	
 
 }

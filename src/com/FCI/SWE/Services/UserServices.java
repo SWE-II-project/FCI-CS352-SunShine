@@ -79,31 +79,7 @@ public class UserServices {
 	 * @return user in json format
 	 */
 	
-	@POST
-	@Path("/SignoutService")
-	public String loginService(@FormParam("uname") String uname,
-			@FormParam("password") String pass) {
-		JSONObject object = new JSONObject();
-		UserEntity user = UserEntity.getUser(uname, pass);
-		if (user == null) {
-			object.put("Status", "Failed");
 
-		} else {
-			object.put("Status", "OK");
-			object.put("name", user.getName());
-			object.put("email", user.getEmail());
-			object.put("password", user.getPass());
-			object.put("id", user.getId());
-		}
-		return object.toString();
-
-	}
-	
-	
-	
-	
-	
-	
 	
 	@POST
 	@Path("/LoginService")
