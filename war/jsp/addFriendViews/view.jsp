@@ -5,7 +5,7 @@
   <title>Welcome!</title>
 </head>
 <body>
-  <form action="/social/view" method="post">
+  <form>
   for()
   Name : <input type="text" name="name" /> <br>
   

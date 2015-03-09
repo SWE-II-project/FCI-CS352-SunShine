@@ -21,53 +21,27 @@ public class AddServices {
 
 	@POST
 	@Path("/addFriendService")
-	public String addFriend(@FormParam("name") String name) {
+	public String addFriend(@FormParam("uname") String send_name,@FormParam("uname2") String rec_name) {
 		
-		UserEntity userEntity = new UserEntity(null);
         JSONObject json = new JSONObject();
-		ArrayList<UserEntity> Matches= userEntity.getUser(name);
-		if (Matches.size() == 0) {
-			json.put("Status", "Failed");
-		}
-		else {
-			
-		
-			json.put("Status", "OK");
-			for(int i=0; i<Matches.size(); i++){
-				json.put("Name"+i,Matches.get(i).getName());
-			}
-		}
-		
-			return json.toString();
-	
-	
-	}
-	
-	
-	@POST
-	@Path("/addService")
-	public String add(@FormParam("id") long id) {
-		
-		RequestEntity requestEntity = new RequestEntity
-				(User.getCurrentActiveUser().getName(),User.getCurrentActiveUser().getId(),id,"pending");
-        JSONObject json = new JSONObject();
+        UserEntity userEntity = UserEntity.getUser(send_name);
+        UserEntity userEntity2 = UserEntity.getUser(rec_name);
         
-		if (!requestEntity.saveRequest()) {
+        if (userEntity==null && userEntity2==null) {
 			json.put("Status", "Failed");
 		}
 		else {
-		
 			json.put("Status", "OK");
-			
+			RequestEntity requestEntity = new RequestEntity
+					(send_name,userEntity.getId(),rec_name,userEntity2.getId(),"pinding");
+			requestEntity.saveRequest();
 		}
 		
 			return json.toString();
 	
 	
 	}
-	
-	
-	
+		
 	
 
 }

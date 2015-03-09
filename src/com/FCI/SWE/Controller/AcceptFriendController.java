@@ -12,7 +12,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.FCI.SWE.Models.User;
-
+@Path("/")
 public class AcceptFriendController {
 
 	@GET
@@ -30,12 +30,10 @@ public class AcceptFriendController {
 	
 	@POST
 	@Path("/acceptFriend")
-	public String acceptFriend(@FormParam("name") String name)
+	public String acceptFriend(@FormParam("uname") String uname,@FormParam("uname2") String uname2)
 			 {
-
+		String urlParameters = "uname=" + uname +"&uname2="+uname2;
 		String serviceUrl = "http://localhost:8888/rest/acceptFriendService";
-		String urlParameters = "user_id=" + User.getCurrentActiveUser().getId()
-				+ "&name=" + name ;
 		String retJson = Connection.connect(serviceUrl, urlParameters, "POST",
 				"application/x-www-form-urlencoded;charset=UTF-8");
 		JSONParser parser = new JSONParser();
@@ -43,10 +41,11 @@ public class AcceptFriendController {
 		try {
 			obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
-			/*if (object.get("Status").equals("OK"))
-				return "Group created Successfully";
-*/
+			if (object.get("Status").equals("OK"))
+				return "you now friend :D ";
+
 		} catch (ParseException e) {
+	
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

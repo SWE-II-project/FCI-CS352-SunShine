@@ -51,8 +51,8 @@ public class UserEntity {
 		
 	}
 	
-	public UserEntity(String name){
-		this.name=name;
+	public UserEntity(long id){
+		this.id=id;
 	}
 	
 	private void setId(long id){
@@ -110,25 +110,24 @@ public class UserEntity {
 	
 	//select matches names 
 	
-	public static ArrayList<UserEntity> getUser(String name) {
+	public static UserEntity getUser(String name) {
 		DatastoreService datastore = DatastoreServiceFactory
-				.getDatastoreService();
-        ArrayList<UserEntity> matches=new ArrayList<UserEntity>(); 
+				.getDatastoreService(); 
 		Query gaeQuery = new Query("users");
 		PreparedQuery pq = datastore.prepare(gaeQuery);
+		System.out.println("name : "+name);
 		for (Entity entity : pq.asIterable()) {
+			System.out.println(entity.getProperty("name").toString());
 			if (entity.getProperty("name").toString().equals(name)) {
 				UserEntity returnedUser = new UserEntity(entity.getProperty(
-						"name").toString());
-				returnedUser.setId(entity.getKey().getId());
-			
-				matches.add(returnedUser);
+						"name").toString(), entity.getProperty("email")
+						.toString(), entity.getProperty("password").toString());
+				returnedUser.setId(entity.getKey().getId());	
+				return returnedUser;
 			}
 		}
-		if(matches.size()>0)
-              return matches;
-		else
-		return null;
+		
+        return null;
 	}
 	
 	

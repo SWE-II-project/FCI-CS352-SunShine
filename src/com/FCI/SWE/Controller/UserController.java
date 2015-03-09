@@ -59,6 +59,7 @@ public class UserController {
 	
 	
 	
+	
 	@GET
 	@Path("/signup")
 	public Response signUp() {
@@ -165,6 +166,7 @@ public class UserController {
 			if (object.get("Status").equals("Failed"))
 				return null;
 			Map<String, String> map = new HashMap<String, String>();
+		
 			User user = User.getUser(object.toJSONString());
 			map.put("name", user.getName());
 			map.put("email", user.getEmail());

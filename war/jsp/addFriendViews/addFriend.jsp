@@ -5,10 +5,11 @@
   <title>Welcome!</title>
 </head>
 <body>
-  <form action="/social/addFriend" method="post">
-  Name : <input type="text" name="name" /> <br>
+  <form action="/social/view" method="post"> <br> <br>
   
-  <input type="submit" value="search">
+  Sender Name : <input type="text" name="uname" /> <br>
+  Reciever Name : <input type="text" name="uname2" /> <br>
+  <input type="submit" value="Send">
   
   </form>
 </body>

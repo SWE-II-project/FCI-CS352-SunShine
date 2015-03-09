@@ -12,6 +12,10 @@ import javax.ws.rs.core.MediaType;
 import org.json.simple.JSONObject;
 
 
+
+
+
+import com.FCI.SWE.ServicesModels.RequestEntity;
 import com.FCI.SWE.ServicesModels.UserEntity;
 
 @Path("/")
@@ -20,21 +24,19 @@ public class AcceptServices {
 
 	@POST
 	@Path("/acceptFriendService")
-	public String addFriend(@FormParam("id") long id) {
+	public String acceptFriend(@FormParam("uname") String send_name,@FormParam("uname2") String rec_name) {
 		
-		UserEntity userEntity = new UserEntity(null);
+		RequestEntity request=new RequestEntity(send_name,rec_name);
         JSONObject json = new JSONObject();
-		ArrayList<UserEntity> Matches= userEntity.getUser(id);
-		if (Matches.size() == 0) {
+		
+		if (!request.getRequest(send_name, rec_name)) {
 			json.put("Status", "Failed");
 		}
 		else {
 			
 		
 			json.put("Status", "OK");
-			for(int i=0; i<Matches.size(); i++){
-				json.put("Name"+i, Matches.get(i).getName());
-			}
+			
 		}
 		
 			return json.toString();

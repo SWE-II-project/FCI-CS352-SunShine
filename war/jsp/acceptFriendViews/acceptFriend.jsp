@@ -6,8 +6,8 @@
 </head>
 <body>
   <form action="/social/acceptFriend" method="post">
-  Name : <input type="text" name="name" /> <br>
-  
+  Sender Name : <input type="text" name="uname" /> <br>
+  Receiver Name : <input type="text" name="uname2" /> <br> 
   <input type="submit" value="Accept">
   
   </form>

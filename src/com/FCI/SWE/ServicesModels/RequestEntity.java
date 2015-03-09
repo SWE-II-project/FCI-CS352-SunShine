@@ -30,6 +30,7 @@ import com.google.appengine.api.datastore.Query;
 public class RequestEntity {
 	private String sendName;
 	private long sendID;
+	private String recName;
 	private long recID;
 	private String status;
 
@@ -45,16 +46,32 @@ public class RequestEntity {
 	 * @param password
 	 *            user provided password
 	 */
-	public RequestEntity(String sendName, long sendID, long recID,String status) {
+	public RequestEntity(String sendName, long sendID,String recName, long recID,String status) {
 		this.sendName = sendName;
 		this.sendID= sendID;
 		this.recID = recID;
 		this.status=status;
+		this.recName=recName;
 		
 	}
+ 
 	public RequestEntity(String string) {
 	// TODO Auto-generated constructor stub
 }
+	public RequestEntity(String send_name, String rec_name) {
+		// TODO Auto-generated constructor stub
+		this.recName=rec_name;
+		this.sendName=send_name;
+	}
+
+	public void setrecName(String recName)
+	{
+		this.recName=recName;
+	}
+	public String getrecName()
+	{
+		return recName;
+	}
 	public String getsendName()
 	{
 		return sendName;
@@ -101,31 +118,30 @@ public class RequestEntity {
 		employee.setProperty("sendID", this.sendID);
 		employee.setProperty("recID", this.recID);
 		employee.setProperty("status", this.status);
+		employee.setProperty("recname", this.recName);
 		datastore.put(employee);
 
 		return true;
 
 	}
 	
-	public static ArrayList<RequestEntity> getRequest(long id) {
+	public  boolean getRequest(String send_name ,String  rec_name) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
-        ArrayList<RequestEntity> matches=new ArrayList<RequestEntity>(); 
+       // ArrayList<RequestEntity> matches=new ArrayList<RequestEntity>(); 
 		Query gaeQuery = new Query("Requests");
+		//System.out.println("S : " + send_name + " R" + rec_name);
 		PreparedQuery pq = datastore.prepare(gaeQuery);
 		for (Entity entity : pq.asIterable()) {
-			if (entity.getProperty("recID").toString().equals(id)) {
-				RequestEntity returnedRequest = new RequestEntity(entity.getProperty(
-						"sendName").toString());
-			//	returnedRequest.setrecId(entity.getKey().getId());
-			
-				matches.add(returnedRequest);
+			if (entity.getProperty("sendName").toString().equals(send_name) &&
+					entity.getProperty("recname").toString().equals(rec_name))
+			{
+				entity.setProperty("status", "active");
+				datastore.put(entity);
+				return true;
 			}
 		}
-		if(matches.size()>0)
-              return matches;
-		else
-		return null;
+		return false;
 	}
 	
 	

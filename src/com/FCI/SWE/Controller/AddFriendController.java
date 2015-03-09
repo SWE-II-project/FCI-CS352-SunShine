@@ -19,23 +19,22 @@ import org.json.simple.parser.ParseException;
 import com.FCI.SWE.Models.User;
 import com.FCI.SWE.Services.AddServices;
 import com.FCI.SWE.ServicesModels.UserEntity;
-
+@Path("/")
+@Produces("text/html")
 public class AddFriendController {
 
 	@GET
-	@Path("/friend")
+	@Path("/viewf")
 	public Response friend() {
 
-		if (User.getCurrentActiveUser() == null) {
-			return Response.serverError().build();
-		}
+
 		return Response.ok(new Viewable("/jsp/addFriendViews/addFriend")).build();
 	}
-
 	
 	
 	
-	@POST
+	
+	/*@POST
 	@Path("/addFriend")
 	public String addFriend(@FormParam("name") String name)
 			 {
@@ -53,45 +52,21 @@ public class AddFriendController {
 			/*if (object.get("Status").equals("OK"))
 				return "Group created Successfully";
 */
-		} catch (ParseException e) {
+		/*} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return null;
-	}
+	}*/
 
-	@POST
-	@Path("/add")
-	public String add(@FormParam("id") long id)
-			 {
-
-		String serviceUrl = "http://localhost:8888/rest/addService";
-		String urlParameters = "user_id=" + User.getCurrentActiveUser().getId();
-		String retJson = Connection.connect(serviceUrl, urlParameters, "POST",
-				"application/x-www-form-urlencoded;charset=UTF-8");
-		JSONParser parser = new JSONParser();
-		Object obj;
-		try {
-			obj = parser.parse(retJson);
-			JSONObject object = (JSONObject) obj;
-			/*if (object.get("Status").equals("OK"))
-				return "Group created Successfully";
-*/
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
+	
 	@POST
 	@Path("/view")
-	@Produces("text/html")
-	public Response view(@FormParam("uname") String uname) {
-		String urlParameters = "uname=" + uname ;
-
+	//@Produces("text/html")
+	public String view(@FormParam("uname") String uname,@FormParam("uname2") String uname2) {
+		String urlParameters = "uname=" + uname +"&uname2="+uname2;
+		String serviceUrl = "http://localhost:8888/rest/addFriendService";
 		String retJson = Connection.connect(
 				"http://localhost:8888/rest/addFriendService", urlParameters,
 				"POST", "application/x-www-form-urlencoded;charset=UTF-8");
@@ -101,32 +76,16 @@ public class AddFriendController {
 		try {
 			obj = parser.parse(retJson);
 			JSONObject object = (JSONObject) obj;
-			if (object.get("Status").equals("Failed"))
-				return null;
-			//Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
-			Map<String, String> map = new HashMap<String, String>();
-			ArrayList<User> users = User.getUsers(object.toJSONString());
-			for(int i=0;i<users.size();i++)
-			{
-				map.put("name"+i, users.get(i).getName());
-			}
-			
-			//map.put("email", user.getEmail());
-			return Response.ok(new Viewable("/jsp/addFriendViews/view", map)).build();
-		//	for(int i=0; i<user)
-			//map.put("name", user.getName());
-		//	map.put("email", user.getEmail());
-			//return Response.ok(new Viewable("/jsp/home", map)).build();
+			if (object.get("Status").equals("OK"))
+				return "Request sent Successfully";
+
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		/*
-		 * UserEntity user = new UserEntity(uname, email, pass);
-		 * user.saveUser(); return uname;
-		 */
-		return null;
+		return "Failed";
+		
 
 	}
 
