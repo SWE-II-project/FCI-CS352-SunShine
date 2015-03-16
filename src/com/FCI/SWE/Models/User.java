@@ -36,8 +36,22 @@ public class User {
 		// TODO Auto-generated constructor stub
 	}
 
+	public User() {
+		// TODO Auto-generated constructor stub
+	}
+
 	private void setId(long id){
 		this.id = id;
+	}
+	
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	
+	public void setEmail(String email)
+	{
+		this.email = email;
 	}
 	
 	public long getId(){
@@ -109,6 +123,7 @@ public class User {
 		return null;
 
 	}
+	
 
 	
 }

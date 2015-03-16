@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.server.mvc.Viewable;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -64,6 +65,12 @@ public class UserController {
 	@Path("/signup")
 	public Response signUp() {
 		return Response.ok(new Viewable("/jsp/register")).build();
+	}
+    
+	@GET
+	@Path("/Search")
+	public Response Search() {
+		return Response.ok(new Viewable("/jsp/SearchWindow")).build();
 	}
 
 	/**
@@ -175,13 +182,50 @@ public class UserController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
+
+	}
+
+		
+		@POST
+		@Path("/searchUser")
+		@Produces("text/html")
+		public Response home(@FormParam("uname") String uname) {
+			String urlParameters = "uname=" + uname ;
+
+			String retJson = Connection.connect(
+					"http://localhost:8888/rest/SearchService", urlParameters,
+					"POST", "application/x-www-form-urlencoded;charset=UTF-8");
+
+			JSONParser parser = new JSONParser();
+			Object obj;
+			Map<String, ArrayList<UserEntity>> map = new HashMap<String, ArrayList<UserEntity>>();
+			try {
+				obj = parser.parse(retJson);
+				JSONArray array = (JSONArray) obj;
+				
+				
+				ArrayList<UserEntity> matches = new ArrayList<UserEntity>();
+			    for(int i=0; i<array.size(); i++)
+			    {
+			    	JSONObject object;
+			    	
+			    	object = (JSONObject) array.get(i);
+			    	matches.add(UserEntity.parseuserinfo(object.toString()));
+			    }
+				map.put("users", matches);
+				return Response.ok(new Viewable("/jsp/viewUsers", map)).build();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		/*
 		 * UserEntity user = new UserEntity(uname, email, pass);
 		 * user.saveUser(); return uname;
 		 */
-		return null;
+			return null;
 
-	}
+		}
 
 }

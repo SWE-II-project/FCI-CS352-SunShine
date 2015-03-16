@@ -8,6 +8,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.FCI.SWE.Models.User;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -55,10 +56,29 @@ public class UserEntity {
 		this.id=id;
 	}
 	
+	public UserEntity(String name, String email) {
+		this.name=name;
+		this.email=email;
+	
+	}
+
+	public UserEntity() {
+		// TODO Auto-generated constructor stub
+	}
+
 	private void setId(long id){
 		this.id = id;
 	}
 	
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+	
+	public void setEmail(String email)
+	{
+		this.email = email;
+	}
 	public long getId(){
 		return id;
 	}
@@ -87,7 +107,25 @@ public class UserEntity {
 	 *            user password
 	 * @return Constructed user entity
 	 */
-
+	
+	public static UserEntity parseuserinfo(String json)
+	{
+		JSONParser parser = new JSONParser();
+		try {
+			JSONObject object = (JSONObject) parser.parse(json);
+			UserEntity user=new UserEntity();
+			user.setName(object.get("name").toString());
+			user.setEmail(object.get("email").toString());
+			user.setId(Long.parseLong(object.get("id").toString()));
+			
+			return user;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 	public static UserEntity getUser(String name, String pass) {
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
@@ -106,6 +144,24 @@ public class UserEntity {
 		}
 
 		return null;
+	}
+	public static ArrayList<UserEntity> getUsers(String name) {
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+
+		Query gaeQuery = new Query("users");
+		PreparedQuery pq = datastore.prepare(gaeQuery);
+		ArrayList<UserEntity> matches = new ArrayList<UserEntity>();
+		for (Entity entity : pq.asIterable()) {
+			if (entity.getProperty("name").toString().equals(name)) {
+				UserEntity returnedUser = new UserEntity(entity.getProperty(
+						"name").toString(), entity.getProperty("email").toString());
+				returnedUser.setId(entity.getKey().getId());
+				matches.add(returnedUser);
+			}
+		}
+
+		return matches;
 	}
 	
 	//select matches names 
